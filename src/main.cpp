@@ -829,15 +829,11 @@ uint256 static GetOrphanRoot(const CBlock* pblock)
 
 int64 static GetBlockValue(int nHeight, int64 nFees)
 {
-if(nHeight<4320) return 200*COIN;	//720000 coins in two weeks
-else if(nHeight<8640) return 100*COIN;	//144000 coins in four weeks
-else if(nHeight<12960) return 50*COIN;	//72000 coins in 6 weeks
-else if(nHeight>17280) return 1*COIN;
-    int64 nSubsidy = 1 * COIN;			// 1 Coin until 5 million limit reached
-	
-	if(nHeight>5000000) nSubsidy=0;
+int64 nSubsidy = 200 * COIN;
 
-    return nSubsidy + nFees;
+if(nHeight>17280) nSubsidy = 1 * COIN;
+    
+return nSubsidy + nFees;
 
 }
 
