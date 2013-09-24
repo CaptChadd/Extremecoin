@@ -837,8 +837,8 @@ return nSubsidy + nFees;
 
 }
 
-static const int64 nTargetTimespan = 0.25 * 24 * 60 * 60; // Exremecoin: 6 hours
-static const int64 nTargetSpacing = 300; // Extremecoin: 5 minute blocks
+static const int64 nTargetTimespan = 60 * 2; // Exremecoin: 6 hours
+static const int64 nTargetSpacing = 120; // Extremecoin: 2 minute blocks
 static const int64 nInterval = nTargetTimespan / nTargetSpacing;
 
 // Thanks: Balthazar for suggesting the following fix
