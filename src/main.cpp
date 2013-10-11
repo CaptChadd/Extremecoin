@@ -837,9 +837,10 @@ return nSubsidy + nFees;
 
 }
 
-static int64 nTargetTimespan = 0.25 * 24 * 60 * 60; // Exremecoin: 6 hours
+// Extremecoin original specifications
+static int64 nTargetTimespan = 21600; // Extremecoin: 6 hours
 static int64 nTargetSpacing = 300; // Extremecoin: 5 minute blocks
-static int64 nInterval = nTargetTimespan / nTargetSpacing;
+static int64 nInterval = nTargetTimespan / nTargetSpacing; // Extremecoin: retarget every 72 blocks
 
 // Thanks: Balthazar for suggesting the following fix
 // https://bitcointalk.org/index.php?topic=182430.msg1904506#msg1904506
@@ -879,11 +880,17 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
     if (pindexLast == NULL)
         return nProofOfWorkLimit;
 
-    if((pindexLast->nHeight+1) >= 7820)
+    if((pindexLast->nHeight+1) >= 7820 && (pindexLast->nHeight+1) < 14984)
     {
-        nTargetTimespan = 60 * 2;
-        nTargetSpacing = 120;
-        nInterval = nTargetTimespan / nTargetSpacing;
+        nTargetTimespan = 120; // Extremecoin v1.2: 2 minutes
+        nTargetSpacing = 120; // Extremecoin v1.2: 2 minute blocks
+        nInterval = nTargetTimespan / nTargetSpacing; // Extremecoin v1.2: retarget every single block
+    }
+    else if((pindexLast->nHeight+1) >= 14984)
+    {
+        nTargetTimespan = 480; // Extremecoin v1.2: 8 minutes
+        nTargetSpacing = 120; // Extremecoin v1.2: 2 minute blocks
+        nInterval = nTargetTimespan / nTargetSpacing; // Extremecoin v1.2: retarget every 4 blocks
     }
 
     // Only change once per interval
