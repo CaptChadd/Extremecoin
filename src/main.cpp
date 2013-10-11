@@ -837,9 +837,9 @@ return nSubsidy + nFees;
 
 }
 
-static const int64 nTargetTimespan = 60 * 2; // Exremecoin: 6 hours
-static const int64 nTargetSpacing = 120; // Extremecoin: 2 minute blocks
-static const int64 nInterval = nTargetTimespan / nTargetSpacing;
+static int64 nTargetTimespan = 0.25 * 24 * 60 * 60; // Exremecoin: 6 hours
+static int64 nTargetSpacing = 300; // Extremecoin: 5 minute blocks
+static int64 nInterval = nTargetTimespan / nTargetSpacing;
 
 // Thanks: Balthazar for suggesting the following fix
 // https://bitcointalk.org/index.php?topic=182430.msg1904506#msg1904506
@@ -878,6 +878,13 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
     // Genesis block
     if (pindexLast == NULL)
         return nProofOfWorkLimit;
+
+    if((pindexLast->nHeight+1) >= 7820)
+    {
+        nTargetTimespan = 60 * 2;
+        nTargetSpacing = 120;
+        nInterval = nTargetTimespan / nTargetSpacing;
+    }
 
     // Only change once per interval
     if ((pindexLast->nHeight+1) % nInterval != 0)
