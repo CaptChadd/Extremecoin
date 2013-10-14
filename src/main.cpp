@@ -837,10 +837,9 @@ return nSubsidy + nFees;
 
 }
 
-// Extremecoin original specifications
-static int64 nTargetTimespan = 21600; // Extremecoin: 6 hours between retargets
+static int64 nTargetTimespan = 0.25 * 24 * 60 * 60; // Exremecoin: 6 hours
 static int64 nTargetSpacing = 300; // Extremecoin: 5 minute blocks
-static int64 nInterval = nTargetTimespan / nTargetSpacing; // Extremecoin: retarget every 72 blocks
+static int64 nInterval = nTargetTimespan / nTargetSpacing; 
 
 // Thanks: Balthazar for suggesting the following fix
 // https://bitcointalk.org/index.php?topic=182430.msg1904506#msg1904506
@@ -879,24 +878,16 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
     // Genesis block
     if (pindexLast == NULL)
         return nProofOfWorkLimit;
-
-    // Extremecoin specifications as they changed with v1.2
-    if((pindexLast->nHeight+1) >= 7820 && (pindexLast->nHeight+1) < 14984)
+		
+    if((pindexLast->nHeight+1) >= 7820)
     {
-        nTargetTimespan = 120; // Extremecoin v1.2: 2 minutes between retargets
-        nTargetSpacing = 120; // Extremecoin v1.2: 2 minute blocks
-        nInterval = nTargetTimespan / nTargetSpacing; // Extremecoin v1.2: retarget every single block
-    }
-    // Extremecoin specifications which match those stated in the announce thread. Set to switch at
-    // block 14984 as Balthazar's scan back over 4 retarget intervals kicks in at block 15000.
-    else if((pindexLast->nHeight+1) >= 14984)
-    {
-        nTargetTimespan = 480; // Extremecoin v1.3: 8 minutes between retargets
-        nTargetSpacing = 120; // Extremecoin v1.3: 2 minute blocks
-        nInterval = nTargetTimespan / nTargetSpacing; // Extremecoin v1.3: retarget every 4 blocks
-    }
-
-    // Only change once per interval
+        nTargetTimespan = 60 * 2;
+        nTargetSpacing = 120;
+        nInterval = nTargetTimespan / nTargetSpacing;
+   }
+ 
+    
+	// Only change once per interval
     if ((pindexLast->nHeight+1) % nInterval != 0)
     {
         // Special difficulty rule for testnet:
