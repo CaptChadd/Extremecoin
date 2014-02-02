@@ -910,6 +910,8 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
         return pindexLast->nBits;
     }
 
+    if (pindexLast->nHeight > COINFIX2_BLOCK) { nReTargetHistoryFact = 1;} //new coinfix only look at current block and previous
+    
     // Litecoin: This fixes an issue where a 51% attack can change difficulty at will.
     // Go back the full period unless it's the first retarget after genesis. Code courtesy of Art Forz
     int blockstogoback = nInterval-1;
@@ -919,6 +921,7 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
         blockstogoback = nReTargetHistoryFact * nInterval;
     }
 
+    
     // Go back by what we want to be nReTargetHistoryFact*nInterval blocks
     const CBlockIndex* pindexFirst = pindexLast;
     for (int i = 0; pindexFirst && i < blockstogoback; i++)
@@ -933,11 +936,20 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
     else
         nActualTimespan = pindexLast->GetBlockTime() - pindexFirst->GetBlockTime();
     printf("  nActualTimespan = %"PRI64d"  before bounds\n", nActualTimespan);
-    if (nActualTimespan < nTargetTimespan/4)
-        nActualTimespan = nTargetTimespan/4;
-    if (nActualTimespan > nTargetTimespan*4)
-        nActualTimespan = nTargetTimespan*4;
-
+    
+    if (pindexLast->nHeight > COINFIX2_BLOCK){
+        if (nActualTimespan > nTargetTimespan*2) //if more than 2* the target set minimum difficulty
+            return nProofOfWorkLimit;
+          
+        if (nActualTimespan < nTargetTimespan/2) //if less than half the target 2* difficulty
+            nActualTimespan = nTargetTimespan/2;
+    }
+    else{
+        if (nActualTimespan < nTargetTimespan/4)
+            nActualTimespan = nTargetTimespan/4;
+        if (nActualTimespan > nTargetTimespan*4) 
+            nActualTimespan = nTargetTimespan*4;
+    }
     // Retarget
     CBigNum bnNew;
     bnNew.SetCompact(pindexLast->nBits);
