@@ -875,7 +875,7 @@ unsigned int static KimotoGravityWell(const CBlockIndex* pindexLast, const CBloc
         /* current difficulty formula, extremecoin - kimoto gravity well */
         const CBlockIndex  *BlockLastSolved                                = pindexLast;
         const CBlockIndex  *BlockReading                                = pindexLast;
-        const CBlockHeader *BlockCreating                                = pblock;
+        const CBlock *BlockCreating                                = pblock;
                                                 BlockCreating                                = BlockCreating;
         uint64                                PastBlocksMass                                = 0;
         int64                                PastRateActualSeconds                = 0;
@@ -931,7 +931,7 @@ unsigned int static KimotoGravityWell(const CBlockIndex* pindexLast, const CBloc
         return bnNew.GetCompact();
 }
 
-unsigned int static GetNextWorkRequired_V2(const CBlockIndex* pindexLast, const CBlockHeader *pblock)
+unsigned int static GetNextWorkRequired_V2(const CBlockIndex* pindexLast, const CBlock *pblock)
 {
         static const int64        BlocksTargetSpacing                        =  120;     // 2 minute blocks
         unsigned int                TimeDaySeconds                             = 86400;  //60 * 60 * 24;
